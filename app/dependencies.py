@@ -27,7 +27,7 @@ TokenDep = Annotated[str, Security(oauth2_scheme_public)]
 
 async def get_current_user(session: SessionDep, token: TokenDep) -> User:
     payload = decode_jwt_token(token)
-    user = await user_crud.get_by_email(session, payload["sub"])
+    user = await user_crud.get_user_by_email(session, payload["sub"])
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
