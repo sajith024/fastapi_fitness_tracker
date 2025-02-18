@@ -1,0 +1,16 @@
+# python
+__pycache__/
+
+# project
+.env
+.pytest_cache/
+logs/
+*.db
+
+# alembic
+alembic/versions/*
+!alembic/versions/.gitkeep
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
