@@ -18,6 +18,7 @@ class Workout(Base):
     date: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True), default=date_tz.now
     )
+    is_deleted: Mapped[bool] = mapped_column(default=False)
 
     # relationship
     user_id: Mapped[UUID] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"))
