@@ -1,6 +1,6 @@
 from fastapi import APIRouter, status
 
-from app.schemes.base import AppResponse
+from app.schemas.base import AppResponse
 
 
 router = APIRouter(prefix="/utils", tags=["utils"])
