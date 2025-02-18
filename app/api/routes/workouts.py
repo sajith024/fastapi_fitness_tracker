@@ -74,7 +74,7 @@ async def create_workout(
 
     return AppResponse(
         message="Created Successfully",
-        status=status.HTTP_200_OK,
+        status=status.HTTP_201_CREATED,
     )
 
 
