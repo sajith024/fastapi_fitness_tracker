@@ -1,3 +1,4 @@
+from typing import TYPE_CHECKING
 from datetime import datetime
 from uuid import UUID
 
@@ -7,6 +8,9 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base
 from app.models.users import User
+
+if TYPE_CHECKING:
+    from app.models.workouts import Workout
 
 
 class Goal(Base):
@@ -23,7 +27,7 @@ class Goal(Base):
         back_populates="goals", cascade="all, delete-orphan"
     )
 
-    workouts: Mapped[list["Workout"]] = relationship(  # type: ignore
+    workouts: Mapped[list["Workout"]] = relationship(
         back_populates="goal", cascade="all, delete-orphan"
     )
 

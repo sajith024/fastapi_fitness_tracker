@@ -1,3 +1,4 @@
+from typing import TYPE_CHECKING
 from datetime import datetime
 from uuid import UUID
 
@@ -8,6 +9,9 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.base import Base
 from app.models.users import User
 from app.utils import date_tz
+
+if TYPE_CHECKING:
+    from app.models.goals import Goal
 
 
 class Workout(Base):
@@ -29,7 +33,7 @@ class Workout(Base):
     goal_id: Mapped[UUID | None] = mapped_column(
         ForeignKey("goal.id", ondelete="CASCADE")
     )
-    goal: Mapped["Goal"] = relationship(  # type: ignore
+    goal: Mapped["Goal | None"] = relationship(
         back_populates="workouts", cascade="all, delete-orphan"
     )
 
