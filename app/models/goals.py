@@ -15,6 +15,7 @@ class Goal(Base):
     target_duration: Mapped[int] = mapped_column()
     target_calories: Mapped[float] = mapped_column()
     deadline: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True))
+    is_deleted: Mapped[bool] = mapped_column(default=False)
 
     # relationship
     user_id: Mapped[UUID] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"))
