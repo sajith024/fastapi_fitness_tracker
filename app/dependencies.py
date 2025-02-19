@@ -7,7 +7,7 @@ from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
-from app.core.database import get_db
+from app.core.database import aget_db
 from app.core.security import (
     PublicOAuth2PasswordBearer,
     decode_jwt_token,
@@ -20,7 +20,7 @@ oauth2_scheme_public = PublicOAuth2PasswordBearer(
     tokenUrl=f"{settings.API_V1_STR}/auth/login"
 )
 
-SessionDep = Annotated[AsyncSession, Depends(get_db)]
+SessionDep = Annotated[AsyncSession, Depends(aget_db)]
 
 TokenDep = Annotated[str, Security(oauth2_scheme_public)]
 

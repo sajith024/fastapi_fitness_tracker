@@ -18,6 +18,12 @@ async def authenticate(session: AsyncSession, email: str, password: str) -> User
     return db_user
 
 
+async def get_all_user(session: AsyncSession) -> list[User]:
+    query = select(User).where(User.is_deleted == False, User.is_active == True)
+    users = await session.scalars(query)
+    return list(users.all())
+
+
 async def get_user_by_email(session: AsyncSession, email: str) -> User | None:
     query = select(User).where(User.email == email)
     db_obj = await session.scalar(query)
