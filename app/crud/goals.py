@@ -96,7 +96,9 @@ async def get_achieved_goals(session: AsyncSession, user: User) -> list[Goal]:
     query = (
         select(Goal)
         .join(Workout, Workout.goal_id == Goal.id)
-        .where(Goal.is_notified == False, Goal.user_id == user.id)
+        .where(
+            Goal.is_notified == False, Goal.is_deleted == False, Goal.user_id == user.id
+        )
         .group_by(Goal.id, Goal.target_calories)
         .having(Goal.target_calories <= func.sum(Workout.calories_burned))
     )
