@@ -5,7 +5,6 @@ from pydantic import (
     Field,
 )
 
-TORNone = TypeVar("TORNone", default=None)
 T = TypeVar("T")
 
 
@@ -14,8 +13,8 @@ class EmailData(BaseModel):
     subject: str
 
 
-class AppResponse(BaseModel, Generic[TORNone]):
-    data: TORNone | None = None
+class AppResponse(BaseModel, Generic[T]):
+    data: T | None = None
     message: str = ""
     status: int
 
