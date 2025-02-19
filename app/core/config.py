@@ -4,6 +4,7 @@ from typing import Annotated, Any, Literal
 from pydantic import (
     AnyUrl,
     BeforeValidator,
+    RedisDsn,
     computed_field,
 )
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -36,14 +37,35 @@ class Settings(BaseSettings):
         return [str(origin).rstrip("/") for origin in self.BACKEND_CORS_ORIGINS]
 
     PROJECT_NAME: str
+    
+    # Email
+    SMTP_PORT: int = 587
+    SMTP_HOST: str | None = None
+    SMTP_USER: str | None = None
+    SMTP_PASSWORD: str | None = None
+    EMAILS_FROM_EMAIL: str | None = None
+    EMAILS_FROM_NAME: str | None = None
 
     # sqlite
     SQLITE_DB: str
+
+    # Redis
+    REDIS_HOST: str
+    REDIS_PORT: int = 5432
 
     @computed_field
     @property
     def SQLALCHEMY_DATABASE_URI(self) -> str:
         return f"sqlite+aiosqlite:///{self.SQLITE_DB}.db"
+
+    @computed_field
+    @property
+    def REDIS_URI(self) -> RedisDsn:
+        return RedisDsn.build(
+            scheme="redis",
+            host=self.REDIS_HOST,
+            port=self.REDIS_PORT,
+        )
 
     # JWT
     JWT_SECRET_KEY: str = secrets.token_urlsafe(32)

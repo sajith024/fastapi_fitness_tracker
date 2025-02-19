@@ -1,14 +1,26 @@
 from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 from sqlalchemy.sql import func, select
 
 from app.models.goals import Goal
 from app.models.users import User
+from app.models.workouts import Workout
 from app.schemas.goals import GoalCreate, GoalUpdate
 
 
-async def get_all_goals(
+async def get_all_goals(session: AsyncSession) -> list[Goal]:
+    query = (
+        select(Goal)
+        .options(selectinload(Goal.workouts))
+        .where(Goal.is_deleted == False)
+    )
+    goals = await session.scalars(query)
+    return list(goals.all())
+
+
+async def get_all_paginated_goals(
     session: AsyncSession, user: User, page: int, limit: int
 ) -> list[Goal]:
     page_limit = limit * page
@@ -75,3 +87,16 @@ async def delete_goal(session: AsyncSession, goal: Goal) -> None:
     goal.is_deleted = True
     session.add(goal)
     await session.commit()
+
+
+async def get_achieved_goals(session: AsyncSession, user: User) -> list[Goal]:
+    query = (
+        select(Goal)
+        .join(Workout, Workout.goal_id == Goal.id)
+        .where(Goal.is_notified == False, Goal.user_id == user.id)
+        .group_by(Goal.id, Goal.target_calories)
+        .having(Goal.target_calories <= func.sum(Workout.calories_burned))
+    )
+
+    goals = await session.scalars(query)
+    return list(goals.all())

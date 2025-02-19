@@ -1,3 +1,4 @@
+from datetime import datetime
 from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -87,3 +88,15 @@ async def delete_workout(session: AsyncSession, workout: Workout) -> None:
     workout.is_deleted = True
     session.add(workout)
     await session.commit()
+
+
+async def weekly_fitness_trend(
+    session: AsyncSession, user: User, start_date: datetime, end_date: datetime
+) -> list[Workout]:
+    query = (
+        select(Workout)
+        .where(Workout.user == user, Workout.is_deleted == False)
+        .where(Workout.created_at >= start_date, Workout.created_at <= end_date)
+    )
+    workouts = await session.scalars(query)
+    return list(workouts.all())

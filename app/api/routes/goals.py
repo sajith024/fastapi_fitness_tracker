@@ -18,7 +18,7 @@ router = APIRouter(prefix="/goals", tags=["goals"])
 async def get_all_goals(
     session: SessionDep, user: CurrentUser, query: Annotated[PaginationQuery, Query()]
 ) -> AppPaginatedResponse[GoalPublic]:
-    goals = await goal_crud.get_all_goals(session, user, query.page, query.limit)
+    goals = await goal_crud.get_all_paginated_goals(session, user, query.page, query.limit)
     total = await goal_crud.total_goals(session, user)
     return AppPaginatedResponse(
         result=[GoalPublic.model_validate(goal) for goal in goals],

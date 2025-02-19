@@ -26,16 +26,12 @@ class Workout(Base):
 
     # relationship
     user_id: Mapped[UUID] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"))
-    user: Mapped[User] = relationship(
-        back_populates="workouts", cascade="all, delete-orphan"
-    )
+    user: Mapped[User] = relationship(back_populates="workouts")
 
     goal_id: Mapped[UUID | None] = mapped_column(
         ForeignKey("goal.id", ondelete="CASCADE")
     )
-    goal: Mapped["Goal | None"] = relationship(
-        back_populates="workouts", cascade="all, delete-orphan"
-    )
+    goal: Mapped["Goal | None"] = relationship(back_populates="workouts")
 
     def __str__(self) -> str:
         return f"{self.exercise}: {self.date}"

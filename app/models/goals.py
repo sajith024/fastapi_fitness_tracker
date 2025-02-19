@@ -20,12 +20,11 @@ class Goal(Base):
     target_calories: Mapped[float] = mapped_column()
     deadline: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True))
     is_deleted: Mapped[bool] = mapped_column(default=False)
+    is_notified: Mapped[bool] = mapped_column(default=False)
 
     # relationship
     user_id: Mapped[UUID] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"))
-    user: Mapped[User] = relationship(
-        back_populates="goals", cascade="all, delete-orphan"
-    )
+    user: Mapped[User] = relationship(back_populates="goals")
 
     workouts: Mapped[list["Workout"]] = relationship(
         back_populates="goal", cascade="all, delete-orphan"
