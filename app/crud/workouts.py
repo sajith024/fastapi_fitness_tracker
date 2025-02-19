@@ -99,3 +99,11 @@ async def weekly_fitness_trend(
     )
     workouts = await session.scalars(query)
     return list(workouts.all())
+
+
+async def get_workout_calories_burned_by_goal(
+    session: AsyncSession, goal_id: UUID
+) -> float:
+    query = select(func.sum(Workout.calories_burned)).where(Workout.goal_id == goal_id)
+    calories_burned = await session.scalar(query)
+    return calories_burned if calories_burned else 0
