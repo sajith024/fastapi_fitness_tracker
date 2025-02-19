@@ -70,6 +70,19 @@ async def create_workout(
                 },
             )
 
+        calories_burned = await workout_crud.get_workout_calories_burned_by_goal(
+            session, goal.id
+        )
+        if calories_burned >= goal.target_calories:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail={
+                    "message": "Goal reached consider changing target.",
+                },
+            )
+
+        workout_data.exercise = goal.target_exercise
+
     await workout_crud.create_workout(session, user, workout_data)
 
     return AppResponse(
@@ -103,6 +116,19 @@ async def update_workout(
                     "message": "Goal not exist",
                 },
             )
+
+        calories_burned = await workout_crud.get_workout_calories_burned_by_goal(
+            session, goal.id
+        )
+        if calories_burned >= goal.target_calories:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail={
+                    "message": "Goal reached consider changing target.",
+                },
+            )
+
+        workout_data.exercise = goal.target_exercise
 
     await workout_crud.update_workout(session, workout, workout_data)
 

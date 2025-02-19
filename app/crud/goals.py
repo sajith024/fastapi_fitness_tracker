@@ -77,6 +77,9 @@ async def update_goal(session: AsyncSession, goal: Goal, goal_data: GoalUpdate) 
     for var, value in goal_dump.items():
         setattr(goal, var, value)
 
+    if goal_data.target_calories:
+        goal.is_notified = False
+
     session.add(goal)
     await session.commit()
     await session.refresh(goal)
