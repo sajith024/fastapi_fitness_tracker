@@ -59,7 +59,6 @@ async def create_workout(
         exercise=workout_data.exercise,
         duration=workout_data.duration,
         calories_burned=workout_data.calories_burned,
-        date=workout_data.date,
         user=user,
         goal_id=workout_data.goal_id,
     )

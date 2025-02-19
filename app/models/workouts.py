@@ -19,9 +19,6 @@ class Workout(Base):
     exercise: Mapped[str] = mapped_column(String(150))
     duration: Mapped[int] = mapped_column()
     calories_burned: Mapped[float] = mapped_column(default=0)
-    date: Mapped[datetime] = mapped_column(
-        TIMESTAMP(timezone=True), default=date_tz.now
-    )
     is_deleted: Mapped[bool] = mapped_column(default=False)
 
     # relationship
@@ -34,4 +31,4 @@ class Workout(Base):
     goal: Mapped["Goal | None"] = relationship(back_populates="workouts")
 
     def __str__(self) -> str:
-        return f"{self.exercise}: {self.date}"
+        return f"{self.exercise}: {self.calories_burned}"
