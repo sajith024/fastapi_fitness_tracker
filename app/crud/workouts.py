@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from sqlalchemy.sql import func, select
 
+from app.models.goals import Goal
 from app.models.users import User
 from app.models.workouts import Workout
 from app.schemas.workouts import WorkoutCreate, WorkoutUpdate
@@ -18,7 +19,10 @@ async def get_all_workouts(
     query = (
         select(Workout)
         .options(selectinload(Workout.goal))
-        .where(Workout.user == user, Workout.is_deleted == False)
+        .join(Goal, Workout.goal_id == Goal.id)
+        .where(
+            Workout.user == user, Workout.is_deleted == False, Goal.is_deleted == False
+        )
     )
 
     if exercise:
@@ -31,8 +35,12 @@ async def get_all_workouts(
 
 
 async def total_workouts(session: AsyncSession, user: User) -> int:
-    stmt = select(func.count(Workout.id)).where(
-        Workout.user == user, Workout.is_deleted == False
+    stmt = (
+        select(func.count(Workout.id))
+        .join(Goal, Workout.goal_id == Goal.id)
+        .where(
+            Workout.user == user, Workout.is_deleted == False, Goal.is_deleted == False
+        )
     )
     return await session.scalar(stmt) or 0
 
@@ -43,8 +51,12 @@ async def get_workout(
     query = (
         select(Workout)
         .options(selectinload(Workout.goal))
+        .join(Goal, Workout.goal_id == Goal.id)
         .where(
-            Workout.id == workout_id, Workout.user == user, Workout.is_deleted == False
+            Workout.id == workout_id,
+            Workout.user == user,
+            Workout.is_deleted == False,
+            Goal.is_deleted == False,
         )
     )
 
@@ -94,7 +106,12 @@ async def weekly_fitness_trend(
 ) -> list[Workout]:
     query = (
         select(Workout)
-        .where(Workout.user == user, Workout.is_deleted == False)
+        .join(Goal, Workout.goal_id == Goal.id)
+        .where(
+            Workout.user == user,
+            Workout.is_deleted == False,
+            Goal.is_deleted == False,
+        )
         .where(Workout.created_at >= start_date, Workout.created_at <= end_date)
     )
     workouts = await session.scalars(query)
